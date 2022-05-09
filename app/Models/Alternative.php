@@ -9,5 +9,5 @@ class Alternative extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['code','name'];
+    protected $fillable = ['code','name','title_id'];
 }

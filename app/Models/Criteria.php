@@ -10,5 +10,5 @@ class Criteria extends Model
     use HasFactory;
 
     protected $table = 'criteries';
-    protected $fillable = ['title_id','name'];
+    protected $fillable = ['title_id','name','category','percent'];
 }
