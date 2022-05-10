@@ -7,16 +7,15 @@
             <div class="card">
                 <div class="card-header">
                     <h5 class="float-start">Category</h5>
-                    <button class="btn btn-sm btn-primary float-end" id="btnAddCategory">Add New</button>
+                    <button class="btn btn-sm btn-primary float-end" id="btnAddTitle">Add New</button>
                 </div>
                 <div class="card-body">
                     <table class="table">
                         <thead>
-                            <th>Name</th>
-                            <th>Description</th>
+                            <th>Text</th>
                             <th>Action</th>
                         </thead>
-                        <tbody id="dataCategory">
+                        <tbody id="dataTitle">
 
                         </tbody>
                     </table>
@@ -25,46 +24,40 @@
         </div>
     </div>
 </div>
-<div class="modal" tabindex="-1" id="modalAddCategory">
+<div class="modal" tabindex="-1" id="modalAddTitle">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Add Category</h5>
+                <h5 class="modal-title">Add Title</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form method="post" id="formAddCategory" action="{{ route('category.store') }}">
+                <form method="post" id="formAddTitle" action="{{ route('title.store') }}">
                     @csrf
                     <div class="mb-3">
-                        <label for="name" class="form-label">Category Name</label>
-                        <input type="text" name="name" class="form-control" id="categoryName" placeholder="">
-                        <div id="helpCategoryName" class="help-validate">
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label for="description" class="form-label">Description</label>
-                        <input type="text" name="description" class="form-control" id="categoryDescription" placeholder="">
-                        <div id="helpCategoryDescription" class="help-validate">
+                        <label for="text" class="form-label">Text</label>
+                        <input type="text" name="text" class="form-control" id="titleText" placeholder="">
+                        <div id="helpTitleText" class="help-validate">
                         </div>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="submit" form="formAddCategory" id="saveCategory" class="btn btn-primary">Save</button>
+                <button type="submit" form="formAddTitle" id="saveTitle" class="btn btn-primary">Save</button>
             </div>
         </div>
     </div>
 </div>
-<div class="modal" tabindex="-1" id="modalEditCategory">
+<div class="modal" tabindex="-1" id="modalEditTitle">
     <div class="modal-dialog">
-        <div class="modal-content" id="modalEditCateContent">
+        <div class="modal-content" id="modalEditContTitle">
 
         </div>
     </div>
 </div>
 <script>
-    var modalAddCategory = new bootstrap.Modal(document.getElementById('modalAddCategory'), {
+    var modalAddTitle = new bootstrap.Modal(document.getElementById('modalAddTitle'), {
         keyboard: false
     });
 
@@ -84,13 +77,13 @@
         }
     });
 
-    function dataCategory() {
+    function dataTitle() {
         $.ajax({
             type: 'GET',
-            url: '{{ route("category.data") }}',
+            url: '{{ route("title.data") }}',
             data: {},
         }).done(function (res) {
-            $('#dataCategory').html(res);
+            $('#dataTitle').html(res);
         }).fail(function (res) {
             Toast.fire({
                 icon: 'error',
@@ -100,16 +93,15 @@
     }
 
     $(function() {
-        dataCategory();
+        dataTitle();
 
-        $('#btnAddCategory').click(function (e) {
+        $('#btnAddTitle').click(function (e) {
             e.preventDefault();
-            $('#categoryName').val('');
-            $('#categoryDescription').val('');
-            modalAddCategory.show();
+            $('#titleText').val('');
+            modalAddTitle.show();
         });
 
-        $('#formAddCategory').on('submit', function (e) {
+        $('#formAddTitle').on('submit', function (e) {
             e.preventDefault();
             const method = $(this).attr('method');
             const url = $(this).attr('action');
@@ -123,16 +115,15 @@
                     icon: 'success',
                     title: res
                 });
-                modalAddCategory.hide();
-                dataCategory();
+                modalAddTitle.hide();
+                dataTitle();
             }).fail(function (res) {
                 let errors = res.responseJSON.errors;
                 Toast.fire({
                     icon: 'error',
                     title: 'Input Failed'
                 })
-                $('#helpCategoryName').text(errors.name);
-                $('#helpCategoryDescription').text(errors.description);
+                $('#helpTitleText').text(errors.text);
             });
         });
     })
