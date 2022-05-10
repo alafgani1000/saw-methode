@@ -16,17 +16,8 @@
                             <th>Description</th>
                             <th>Action</th>
                         </thead>
-                        <tbody>
-                            @foreach ($datas as $data)
-                                <tr>
-                                    <td>{{ $data['name'] }}</td>
-                                    <td>{{ $data['description'] }}</td>
-                                    <td>
-                                        <button class="btn btn-sm btn-warning">Edit</button>
-                                        <button class="btn btn-sm btn-danger">Delete</button>
-                                    </td>
-                                </tr>
-                            @endforeach
+                        <tbody id="dataCategory">
+
                         </tbody>
                     </table>
                 </div>
@@ -46,11 +37,15 @@
                     @csrf
                     <div class="mb-3">
                         <label for="name" class="form-label">Category Name</label>
-                        <input type="text" class="form-control" id="name" placeholder="">
+                        <input type="text" name="name" class="form-control" id="categoryName" placeholder="">
+                        <div id="helpCategoryName" class="help-validate">
+                        </div>
                     </div>
                     <div class="mb-3">
                         <label for="description" class="form-label">Description</label>
-                        <input type="text" class="form-control" id="description" placeholder="">
+                        <input type="text" name="description" class="form-control" id="categoryDescription" placeholder="">
+                        <div id="helpCategoryDescription" class="help-validate">
+                        </div>
                     </div>
                 </form>
             </div>
@@ -61,17 +56,60 @@
         </div>
     </div>
 </div>
+<div class="modal" tabindex="-1" id="modalEditCategory">
+    <div class="modal-dialog">
+        <div class="modal-content" id="modalEditCateContent">
+
+        </div>
+    </div>
+</div>
 <script>
     var modalAddCategory = new bootstrap.Modal(document.getElementById('modalAddCategory'), {
         keyboard: false
     });
 
+    var modalEditCategory =  new bootstrap.Modal(document.getElementById('modalEditCategory'), {
+        keyboard: false
+    });
+
+    Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer)
+            toast.addEventListener('mouseleave', Swal.resumeTimer)
+        }
+    });
+
+    function dataCategory() {
+        $.ajax({
+            type: 'GET',
+            url: '{{ route("category.data") }}',
+            data: {},
+        }).done(function (res) {
+            $('#dataCategory').html(res);
+        }).fail(function (res) {
+            Toast.fire({
+                icon: 'error',
+                title: res
+            })
+        });
+    }
+
     $(function() {
+        dataCategory();
+
         $('#btnAddCategory').click(function (e) {
             e.preventDefault();
+            $('#categoryName').val('');
+            $('#categoryDescription').val('');
             modalAddCategory.show();
         });
-        $("#formAddCategory").submit(function (e) {
+
+        $('#formAddCategory').on('submit', function (e) {
             e.preventDefault();
             const method = $(this).attr('method');
             const url = $(this).attr('action');
@@ -79,11 +117,22 @@
             $.ajax({
                 type: method,
                 url: url,
-                data: data
-            }).done(function (response) {
-
-            }).fail(function () {
-
+                data: data,
+            }).done(function (res) {
+                Toast.fire({
+                    icon: 'success',
+                    title: res
+                });
+                modalAddCategory.hide();
+                dataCategory();
+            }).fail(function (res) {
+                let errors = res.responseJSON.errors;
+                Toast.fire({
+                    icon: 'error',
+                    title: 'Input Failed'
+                })
+                $('#helpCategoryName').text(errors.name);
+                $('#helpCategoryDescription').text(errors.description);
             });
         });
     })

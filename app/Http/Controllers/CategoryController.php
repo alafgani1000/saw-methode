@@ -9,8 +9,13 @@ class CategoryController extends Controller
 {
     public function index()
     {
+        return view('category.index');
+    }
+
+    public function data()
+    {
         $datas = Categories::all();
-        return view('category.index', compact('datas'));
+        return view('category.data', compact('datas'));
     }
 
     public function store(Request $request)
