@@ -3,8 +3,10 @@
         <td>{{ $data['name'] }}</td>
         <td>{{ $data['description'] }}</td>
         <td>
-            <button class="btn btn-sm btn-warning editCategory" data-id="{{ $data->id }}">Edit</button>
-            <button class="btn btn-sm btn-danger deleteCategory" data-id="{{ $data->id }}">Delete</button>
+            <div class="btn-group">
+                <button class="btn btn-sm btn-warning editCategory text-white" data-id="{{ $data->id }}">Edit</button>
+                <button class="btn btn-sm btn-danger deleteCategory text-white" data-id="{{ $data->id }}">Delete</button>
+            </div>
         </td>
     </tr>
 @endforeach

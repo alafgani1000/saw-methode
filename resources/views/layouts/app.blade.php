@@ -18,6 +18,7 @@
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <link res="stylesheet" href="{{ asset('datatables/datatables.css') }}">
 </head>
 <body>
     <div id="app">
@@ -85,5 +86,6 @@
             @yield('content')
         </main>
     </div>
+    <script src="{{ asset('datatables/datatables.js') }}"></script>
 </body>
 </html>

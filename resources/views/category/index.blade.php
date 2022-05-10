@@ -12,9 +12,11 @@
                 <div class="card-body">
                     <table class="table">
                         <thead>
-                            <th>Name</th>
-                            <th>Description</th>
-                            <th>Action</th>
+                            <tr>
+                                <th>Name</th>
+                                <th>Description</th>
+                                <th>Action</th>
+                            </tr>
                         </thead>
                         <tbody id="dataCategory">
 

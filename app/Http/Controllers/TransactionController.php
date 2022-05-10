@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 
 class TransactionController extends Controller
 {
-    public function Process($titleId)
+    public function generate($titleId)
     {
         $data = collect();
         $criterias = Criteria::where('title_id',$titleId)->get();

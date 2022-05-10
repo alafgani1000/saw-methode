@@ -41,6 +41,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/title/{id}/edit','edit')->name('title.edit');
         Route::put('/title/{id}/update','update')->name('title.update');
         Route::delete('/title/{id}/delete','delete')->name('title.delete');
+        Route::get('/title/{id}/process', 'process')->name('title.process');
     });
 
 });

@@ -26,7 +26,7 @@ class TitleController extends Controller
         ]);
 
         Title::create([
-            'text' => $request->title
+            'text' => $request->text
         ]);
 
         return response('Data Saved');
@@ -55,5 +55,11 @@ class TitleController extends Controller
     {
         $delete = Title::where('id',$id)->delete();
         return response('Data Deleted');
+    }
+
+    public function process($id)
+    {
+        $title = Title::find($id);
+        return view('process.index',compact('title'));
     }
 }

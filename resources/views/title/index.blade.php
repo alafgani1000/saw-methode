@@ -3,19 +3,21 @@
 @section('content')
 <div class="container">
     <div class="row justify-content-center">
-        <div class="col-md-8">
+        <div class="col-md-12">
             <div class="card">
                 <div class="card-header">
                     <h5 class="float-start">Category</h5>
                     <button class="btn btn-sm btn-primary float-end" id="btnAddTitle">Add New</button>
                 </div>
                 <div class="card-body">
-                    <table class="table">
+                    <table class="table" id="tableDataTitle">
                         <thead>
-                            <th>Text</th>
-                            <th>Action</th>
+                            <tr>
+                                <th>Text</th>
+                                <th>Action</th>
+                            </tr>
                         </thead>
-                        <tbody id="dataTitle">
+                        <tbody>
 
                         </tbody>
                     </table>
@@ -61,7 +63,7 @@
         keyboard: false
     });
 
-    var modalEditCategory =  new bootstrap.Modal(document.getElementById('modalEditCategory'), {
+    var modalEditTitle =  new bootstrap.Modal(document.getElementById('modalEditTitle'), {
         keyboard: false
     });
 
@@ -77,27 +79,37 @@
         }
     });
 
-    function dataTitle() {
-        $.ajax({
-            type: 'GET',
-            url: '{{ route("title.data") }}',
-            data: {},
-        }).done(function (res) {
-            $('#dataTitle').html(res);
-        }).fail(function (res) {
-            Toast.fire({
-                icon: 'error',
-                title: res
-            })
-        });
-    }
-
     $(function() {
-        dataTitle();
+        dataTitle = $('#tableDataTitle').DataTable({
+            'processing':true,
+            'serverSide':true,
+            'ajax':'{{ route("title.data") }}',
+            'dom':'Bfrtip',
+            'buttons': [
+                'copy', 'csv', 'excel', 'pdf', 'print','pageLength'
+            ],
+            lengthMenu: [
+                [10, 25, 50, -1], [10, 25, 50, 'All']
+            ],
+            'columns':[
+                {'data':'text'},
+                {'data':'id', render:function(data){
+                    let dataId = data;
+                    let link = '{{ route("title.process", ':dataId') }}';
+                    link = link.replace(':dataId', dataId);
+                    return '<div class="btn-group"><button dataid="'+data+'" class="btn btn-warning btn-sm cat-btn-edit text-white">Edit</button ><button dataid="'+data+'" class="btn btn-danger btn-sm cat-btn-delete">Delete</button><a class="btn btn-sm btn-primary" href="'+link+'" >Process</a></div>'
+                }}
+            ]
+        })
+
+        $("#tableDataTitle_filter").addClass('float-end mb-2');
+        $(".dt-buttons").css("margin-bottom","0 !important")
+        $(".dt-buttons").addClass('float-start mb-0 pb-0');
 
         $('#btnAddTitle').click(function (e) {
             e.preventDefault();
             $('#titleText').val('');
+            $('#helpTitleText').text('');
             modalAddTitle.show();
         });
 
