@@ -7,10 +7,10 @@ use Illuminate\Http\Request;
 
 class CriteriaController extends Controller
 {
-    public function index($titleId)
+    public function data($titleId)
     {
         $datas = Criteria::where('title_id',$titleId)->get();
-        return view('criteria.index', compact('datas'));
+        return $datas;
     }
 
     public function store(Request $request)

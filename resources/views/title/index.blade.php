@@ -128,7 +128,7 @@
                     title: res
                 });
                 modalAddTitle.hide();
-                dataTitle();
+                dataTitle.ajax.reload();
             }).fail(function (res) {
                 let errors = res.responseJSON.errors;
                 Toast.fire({

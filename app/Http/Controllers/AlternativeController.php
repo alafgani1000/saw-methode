@@ -10,14 +10,9 @@ use Yajra\DataTables\Facades\DataTables;
 
 class AlternativeController extends Controller
 {
-    public function index()
-    {
-        return view('alternative.index');
-    }
-
     public function data($titleId)
     {
-        $data = Criteria::where('title_id',$titleId)->get();
+        $data = Alternative::where('title_id',$titleId)->get();
         return DataTables::of($data)->toJson();
     }
 
