@@ -50,5 +50,5 @@
                 $('#helpEditCategoryDescription').text(errors.description);
             });
         });
-    })
+    });
 </script>

@@ -22,7 +22,7 @@
                             <button class="nav-link active" id="alternative-tab" data-bs-toggle="tab" data-bs-target="#alternative" type="button" role="tab" aria-controls="alternative" aria-selected="true">Alternative</button>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">Profile</button>
+                            <button class="nav-link" id="criteria-tab" data-bs-toggle="tab" data-bs-target="#criteria" type="button" role="tab" aria-controls="criteria" aria-selected="false">Criteria</button>
                         </li>
                         <li class="nav-item" role="presentation">
                             <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact" type="button" role="tab" aria-controls="contact" aria-selected="false">Contact</button>
@@ -41,13 +41,16 @@
                                             <tr>
                                                 <th>Code</th>
                                                 <th>Name</th>
+                                                <th>Action</th>
                                             </tr>
                                         </thead>
                                     </table>
                                 </div>
                             </div>
                         </div>
-                        <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">Profile</div>
+                        <div class="tab-pane fade" id="criteria" role="tabpanel" aria-labelledby="criteria-tab">
+
+                        </div>
                         <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">Contact</div>
                     </div>
                 </div>
@@ -55,6 +58,7 @@
         </div>
     </div>
 </div>
+{{-- alternative --}}
 <div class="modal" tabindex="-1" id="modalAddAlternative">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -63,8 +67,9 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form method="post" id="formAddAlternative" action="{{ route('title.store') }}">
+                <form method="post" id="formAddAlternative" action="{{ route('alternative.store') }}">
                     @csrf
+                    <input type="hidden" name="title_id" value="{{ $title->id }}">
                     <div class="mb-3">
                         <label for="code" class="form-label">Code</label>
                         <input type="text" name="code" class="form-control" id="alternativeCode">
@@ -86,8 +91,20 @@
         </div>
     </div>
 </div>
+<div class="modal" tabindex="-1" id="modalEditAlternative">
+    <div class="modal-dialog">
+        <div class="modal-content" id="modalContEditAlternative">
+
+        </div>
+    </div>
+</div>
+{{-- end alternative --}}
 <script>
     var modalAddAlternative = new bootstrap.Modal(document.getElementById('modalAddAlternative'), {
+        keyboard: false
+    });
+
+    var modalEditAlternative = new bootstrap.Modal(document.getElementById('modalEditAlternative'), {
         keyboard: false
     });
 
@@ -107,7 +124,7 @@
         dataAlternative = $('#tableDataAlternative').DataTable({
             'processing':true,
             'serverSide':true,
-            'ajax':'{{ route("alternative.data") }}',
+            'ajax':'{{ route("alternative.data", $title->id) }}',
             'dom':'Bfrtip',
             'buttons': [
                 'copy', 'csv', 'excel', 'pdf', 'print','pageLength'
@@ -119,10 +136,77 @@
                 {'data':'code'},
                 {'data':'name'},
                 {'data':'id', render:function(data){
-                    return '<div class="btn-group"><button dataid="'+data+'" class="btn btn-warning btn-sm cat-btn-edit text-white">Edit</button ><button dataid="'+data+'" class="btn btn-danger btn-sm cat-btn-delete">Delete</button></div>'
+                    return '<div class="btn-group"><button dataid="'+data+'" class="btn btn-warning btn-sm alter-btn-edit text-white">Edit</button ><button dataid="'+data+'" class="btn btn-danger btn-sm alter-btn-delete">Delete</button></div>'
                 }}
             ]
-        })
+        });
+
+        $("#tableDataAlternative_filter").addClass('float-end mb-2');
+        $(".dt-buttons").css("margin-bottom","0 !important")
+        $(".dt-buttons").addClass('float-start mb-0 pb-0');
+
+        $('#tableDataAlternative').on('click','.alter-btn-edit',function (e) {
+            let dataId = $(this).attr('dataid');
+            let url = '{{ route("alternative.edit", ":dataId") }}';
+            url = url.replace(':dataId', dataId);
+            $.ajax({
+                type: "GET",
+                url: url,
+                data: {},
+            }).done(function (res) {
+                $('#modalContEditAlternative').html(res);
+                modalEditAlternative.show();
+            }).fail(function (res) {
+                Toast.fire({
+                    icon: 'error',
+                    title: res
+                });
+            });
+        });
+
+        $('#tableDataAlternative').on('click', '.alter-btn-delete', function (e) {
+            Swal.fire({
+                title: 'Are you sure?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Delete',
+                preConfirm: () => {
+                    let dataId = $(this).attr('dataid');
+                    let url = '{{ route("alternative.delete", ":dataId") }}';
+                    url = url.replace(':dataId', dataId);
+                    $.ajax({
+                        type: "DELETE",
+                        url: url,
+                        data: {},
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        }
+                    }).done(function (res) {
+                        Toast.fire({
+                            icon: 'success',
+                            title: res
+                        });
+                        dataAlternative.ajax.reload();
+                    }).fail(function (res) {
+                        Toast.fire({
+                            icon: 'error',
+                            title: res
+                        });
+                    });
+                },
+                allowOutsideClick: () => !Swal.isLoading()
+                }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire(
+                    'Deleted!',
+                    'Category data has been deleted.',
+                    'success'
+                    )
+                }
+            })
+        });
 
         $('#btnAddAlternative').click(function (e) {
             modalAddAlternative.show();

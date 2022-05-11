@@ -49,7 +49,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::controller(AlternativeController::class)->group(function () {
         Route::get('/alternative/{titleId}/data','data')->name('alternative.data');
         Route::post('/alternative/store','store')->name('alternative.store');
-        Route::edit('/alternative/{id}/edit','edit')->name('alternative.edit');
+        Route::get('/alternative/{id}/edit','edit')->name('alternative.edit');
         Route::put('/alternative/{id}/update','update')->name('alternative.update');
         Route::delete('/alternative/{id}/delete','delete')->name('alternative.delete');
     });
@@ -57,7 +57,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::controller(CriteriaController::class)->group(function () {
         Route::get('/criteria/{titleId}/data','data')->name('criteria.data');
         Route::post('/criteria/store','store')->name('criteria.store');
-        Route::edit('/criteria/{id}/edit','edit')->name('criteria.edit');
+        Route::get('/criteria/{id}/edit','edit')->name('criteria.edit');
         Route::put('/criteria/{id}/update','update')->name('criteria.update');
         Route::delete('/criteria/{id}/delete','delete')->name('criteria.delete');
     });
