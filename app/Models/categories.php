@@ -10,4 +10,9 @@ class Categories extends Model
     use HasFactory;
 
     protected $fillable = ['name','description'];
+
+    public function criterias()
+    {
+        return $this->hasMany(Criteria::class,'category_id');
+    }
 }

@@ -10,5 +10,10 @@ class Criteria extends Model
     use HasFactory;
 
     protected $table = 'criteries';
-    protected $fillable = ['title_id','name','category','percent'];
+    protected $fillable = ['title_id','name','category_id','percent'];
+
+    public function category()
+    {
+        return $this->belongsTo(Categories::class,'category_id');
+    }
 }

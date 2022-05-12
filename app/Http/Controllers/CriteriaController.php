@@ -2,15 +2,24 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Categories;
 use App\Models\Criteria;
 use Illuminate\Http\Request;
+use Yajra\DataTables\Facades\DataTables;
 
 class CriteriaController extends Controller
 {
     public function data($titleId)
     {
-        $datas = Criteria::where('title_id',$titleId)->get();
-        return $datas;
+        $datas = Criteria::with('category')->where('title_id',$titleId)->get();
+        return DataTables::of($datas)->toJson();
+    }
+
+    public function create($titleId)
+    {
+        $categories = Categories::all();
+        $title_id = $titleId;
+        return view('criteria.create',compact('categories','title_id'));
     }
 
     public function store(Request $request)
@@ -35,7 +44,8 @@ class CriteriaController extends Controller
     public function edit($id)
     {
         $data = Criteria::find($id);
-        return view('criteria.edit', compact('id'));
+        $categories = Categories::all();
+        return view('criteria.edit', compact('data','categories'));
     }
 
     public function update(Request $request, $id)

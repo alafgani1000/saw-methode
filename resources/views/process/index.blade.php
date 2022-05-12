@@ -44,12 +44,35 @@
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
+                                        <tbody>
+
+                                        </tbody>
                                     </table>
                                 </div>
                             </div>
                         </div>
-                        <div class="tab-pane fade" id="criteria" role="tabpanel" aria-labelledby="criteria-tab">
+                        <div class="tab-pane fade mt-3" id="criteria" role="tabpanel" aria-labelledby="criteria-tab">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h6 class="float-start">Data Criteria</h6>
+                                    <button class="btn btn-primary float-end" id="btnAddCriteria">Add New</button>
+                                </div>
+                                <div class="card-body">
+                                    <table class="table" id="tableDataCriteria" width="100%">
+                                        <thead>
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Category</th>
+                                                <th>Percent</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
 
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
                         </div>
                         <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">Contact</div>
                     </div>
@@ -58,7 +81,7 @@
         </div>
     </div>
 </div>
-{{-- alternative --}}
+{{-- start modal alternative --}}
 <div class="modal" tabindex="-1" id="modalAddAlternative">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -98,13 +121,37 @@
         </div>
     </div>
 </div>
-{{-- end alternative --}}
+{{-- end modal alternative --}}
+{{-- start modal criteria --}}
+<div class="modal" tabindex="-1" id="modalAddCriteria">
+    <div class="modal-dialog">
+        <div class="modal-content" id="modalContAddCriteria">
+
+        </div>
+    </div>
+</div>
+<div class="modal" tabindex="-1" id="modalEditCriteria">
+    <div class="modal-dialog">
+        <div class="modal-content" id="modalContEditCriteria">
+
+        </div>
+    </div>
+</div>
+{{-- end modal criteria --}}
 <script>
     var modalAddAlternative = new bootstrap.Modal(document.getElementById('modalAddAlternative'), {
         keyboard: false
     });
 
     var modalEditAlternative = new bootstrap.Modal(document.getElementById('modalEditAlternative'), {
+        keyboard: false
+    });
+
+    var modalAddCriteria = new bootstrap.Modal(document.getElementById('modalAddCriteria'), {
+        keyboard: false
+    });
+
+    var modalEditCriteria = new bootstrap.Modal(document.getElementById('modalEditCriteria'), {
         keyboard: false
     });
 
@@ -141,9 +188,70 @@
             ]
         });
 
+        dataCriteria = $('#tableDataCriteria').DataTable({
+            'processing':true,
+            'serverSide':true,
+            'ajax':'{{ route("criteria.data", $title->id) }}',
+            'dom':'Bfrtip',
+            'buttons': [
+                'copy', 'csv', 'excel', 'pdf', 'print','pageLength'
+            ],
+            lengthMenu: [
+                [10, 25, 50, -1], [10, 25, 50, 'All']
+            ],
+            'columns':[
+                {'data':'name'},
+                {'data':'category_id'},
+                {'data':'percent'},
+                {'data':'id', render:function(data){
+                    return '<div class="btn-group"><button dataid="'+data+'" class="btn btn-warning btn-sm criteria-btn-edit text-white">Edit</button ><button dataid="'+data+'" class="btn btn-danger btn-sm criteria-btn-delete">Delete</button></div>'
+                }}
+            ]
+        });
+
         $("#tableDataAlternative_filter").addClass('float-end mb-2');
         $(".dt-buttons").css("margin-bottom","0 !important")
         $(".dt-buttons").addClass('float-start mb-0 pb-0');
+
+        $("#tableDataCriteria_filter").addClass('float-end mb-2');
+        $(".dt-buttons").css("margin-bottom","0 !important")
+        $(".dt-buttons").addClass('float-start mb-0 pb-0');
+
+        $('#btnAddCriteria').on('click', function (e) {
+            let url = '{{ route('criteria.create', $title->id) }}';
+            $.ajax({
+                type: "GET",
+                url: url,
+                data: {},
+            }).done(function (res) {
+                $('#modalContAddCriteria').html(res);
+                modalAddCriteria.show();
+            }).fail(function (res) {
+                Toast.fire({
+                    icon: 'error',
+                    title: res
+                });
+            });
+        });
+
+        $('#tableDataCriteria').on('click','.criteria-btn-edit',function (e) {
+            let dataId = $(this).attr('dataid');
+            let url = '{{ route("criteria.edit", ":dataId") }}';
+            url = url.replace(':dataId', dataId);
+            $.ajax({
+                type: "GET",
+                url: url,
+                data: {},
+            }).done(function (res) {
+                $('#modalContEditCriteria').html(res);
+                modalEditCriteria.show();
+            }).fail(function (res) {
+                Toast.fire({
+                    icon: 'error',
+                    title: 'Error'
+                });
+            });
+        });
 
         $('#tableDataAlternative').on('click','.alter-btn-edit',function (e) {
             let dataId = $(this).attr('dataid');

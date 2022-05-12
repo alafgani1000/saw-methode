@@ -56,6 +56,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::controller(CriteriaController::class)->group(function () {
         Route::get('/criteria/{titleId}/data','data')->name('criteria.data');
+        Route::get('/criteria/{titleId}/create','create')->name('criteria.create');
         Route::post('/criteria/store','store')->name('criteria.store');
         Route::get('/criteria/{id}/edit','edit')->name('criteria.edit');
         Route::put('/criteria/{id}/update','update')->name('criteria.update');
