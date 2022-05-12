@@ -25,14 +25,14 @@ class CriteriaController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'title_id' => 'required',
+            'title' => 'required',
             'name' => 'required',
             'category' => 'required',
             'percent' => 'required'
         ]);
 
         Criteria::create([
-            'title_id' => $request->title_id,
+            'title_id' => $request->title,
             'name' => $request->name,
             'category_id' => $request->category,
             'percent' => $request->percent
@@ -51,14 +51,14 @@ class CriteriaController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'title_id' => 'required',
+            'title' => 'required',
             'name' => 'required',
-            'category_id' => 'required',
+            'category' => 'required',
             'percent' => 'required'
         ]);
 
         Criteria::where('id',$id)->update([
-            'title_id' => $request->title_id,
+            'title_id' => $request->title,
             'name' => $request->name,
             'category_id' => $request->category,
             'percent' => $request->percent

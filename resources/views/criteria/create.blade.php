@@ -5,7 +5,7 @@
 <div class="modal-body">
     <form method="post" id="formAddCriteria" action="{{ route('criteria.store') }}">
         @csrf
-        <input type="hidden" value="{{ $title_id }}" name="titleCriteria">
+        <input type="hidden" value="{{ $title_id }}" name="title" id="titleCriteria">
         <div class="mb-3">
             <label for="name" class="form-label">Name</label>
             <input type="text" name="name" class="form-control" id="nameCriteria">
@@ -14,7 +14,7 @@
         </div>
         <div class="mb-3">
             <label for="category" class="form-label">Category</label>
-            <select class="form-control" name="catgory" id="categoryCriteria">
+            <select class="form-control" name="category" id="categoryCriteria">
                 <option value="">Please Select ...</option>
                 @foreach ($categories as $item)
                     <option value="{{ $item->id }}">{{ $item->name }}</option>

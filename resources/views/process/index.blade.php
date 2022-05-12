@@ -25,7 +25,7 @@
                             <button class="nav-link" id="criteria-tab" data-bs-toggle="tab" data-bs-target="#criteria" type="button" role="tab" aria-controls="criteria" aria-selected="false">Criteria</button>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact" type="button" role="tab" aria-controls="contact" aria-selected="false">Contact</button>
+                            <button class="nav-link" id="data-tab" data-bs-toggle="tab" data-bs-target="#contact" type="button" role="tab" aria-controls="data" aria-selected="false">Data SAW</button>
                         </li>
                     </ul>
                     <div class="tab-content" id="myTabContent">
@@ -74,7 +74,23 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">Contact</div>
+                        <div class="tab-pane fade" id="data" role="tabpanel" aria-labelledby="data-tab">
+                            <div class="card-body">
+                                <table class="table" id="tableDataCriteria" width="100%">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Category</th>
+                                            <th>Percent</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -201,7 +217,7 @@
             ],
             'columns':[
                 {'data':'name'},
-                {'data':'category_id'},
+                {'data':'category.name'},
                 {'data':'percent'},
                 {'data':'id', render:function(data){
                     return '<div class="btn-group"><button dataid="'+data+'" class="btn btn-warning btn-sm criteria-btn-edit text-white">Edit</button ><button dataid="'+data+'" class="btn btn-danger btn-sm criteria-btn-delete">Delete</button></div>'
@@ -251,6 +267,50 @@
                     title: 'Error'
                 });
             });
+        });
+
+        $('#tableDataCriteria').on('click','.criteria-btn-delete',function (e) {
+            Swal.fire({
+                title: 'Are you sure?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Delete',
+                preConfirm: () => {
+                    let dataId = $(this).attr('dataid');
+                    let url = '{{ route("criteria.delete", ":dataId") }}';
+                    url = url.replace(':dataId', dataId);
+                    $.ajax({
+                        type: "DELETE",
+                        url: url,
+                        data: {},
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        }
+                    }).done(function (res) {
+                        Toast.fire({
+                            icon: 'success',
+                            title: res
+                        });
+                        dataCriteria.ajax.reload();
+                    }).fail(function (res) {
+                        Toast.fire({
+                            icon: 'error',
+                            title: res
+                        });
+                    });
+                },
+                allowOutsideClick: () => !Swal.isLoading()
+                }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire(
+                    'Deleted!',
+                    'Criteria data has been deleted.',
+                    'success'
+                    )
+                }
+            })
         });
 
         $('#tableDataAlternative').on('click','.alter-btn-edit',function (e) {

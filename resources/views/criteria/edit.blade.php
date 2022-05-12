@@ -5,7 +5,7 @@
 <div class="modal-body">
     <form method="post" id="formEditCriteria" action="{{ route('criteria.update',$data->id) }}">
         @csrf
-        <input type="hidden" value="{{ $data->title_id }}" name="titleEditCriteria">
+        <input type="hidden" value="{{ $data->title_id }}" name="title" id="titleEditCriteria">
         <div class="mb-3">
             <label for="name" class="form-label">Name</label>
             <input type="text" name="name" class="form-control" id="nameEditCriteria" value="{{ $data->name }}">
@@ -14,10 +14,9 @@
         </div>
         <div class="mb-3">
             <label for="category" class="form-label">Category</label>
-            <select class="form-select" name="catgory" id="categoryEditCriteria">
-                <option value="">Please Select ...</option>
+            <select class="form-select" name="category" id="categoryEditCriteria">
                 @foreach ($categories as $item)
-                    @if($data->id == $item->id)
+                    @if($data->category_id == $item->id)
                         @php
                             $selected = 'selected';
                         @endphp
