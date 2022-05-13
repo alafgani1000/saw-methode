@@ -10,6 +10,14 @@ use Yajra\DataTables\Facades\DataTables;
 
 class TransactionController extends Controller
 {
+    public function store(Request $req)
+    {
+        $data = [
+            'title_id' => $req->titleId,
+            'alternative_id' => $req->alternativeId
+        ];
+    }
+
     public function data($titleId)
     {
         $criterias = Criteria::where('title_id','=',$titleId)->orderBy('id','asc')->get();

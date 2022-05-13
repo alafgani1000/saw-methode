@@ -161,6 +161,15 @@
     </div>
 </div>
 {{-- end modal criteria --}}
+{{-- start modal transaction --}}
+<div class="modal" tabindex="-1" id="modalAddTransaction">
+    <div class="modal-dialog">
+        <div classs="modal-content" id="modalContAddTransaction">
+
+        </div>
+    </div>
+</div>
+{{-- end modal transaction --}}
 <script>
     var modalAddAlternative = new bootstrap.Modal(document.getElementById('modalAddAlternative'), {
         keyboard: false
