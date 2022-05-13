@@ -12,7 +12,7 @@ class TransactionController extends Controller
 {
     public function data($titleId)
     {
-        $criterias = Criteria::where('title_id','=',$titleId)->get();
+        $criterias = Criteria::where('title_id','=',$titleId)->orderBy('id','asc')->get();
         $alternatives = Alternative::where('title_id','=',$titleId)->get();
         $datas = Transaction::where('title_id','=',$titleId)->get();
         $data = $alternatives->map(function($item, $key) use($criterias,$datas,$titleId) {
@@ -32,7 +32,7 @@ class TransactionController extends Controller
                 })
             ];
         });
-        return DataTables::of($data->all());
+        return DataTables::of($data->all())->toJson();
     }
 
     public function generate($titleId)

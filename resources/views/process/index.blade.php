@@ -25,7 +25,7 @@
                             <button class="nav-link" id="criteria-tab" data-bs-toggle="tab" data-bs-target="#criteria" type="button" role="tab" aria-controls="criteria" aria-selected="false">Criteria</button>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="data-tab" data-bs-toggle="tab" data-bs-target="#contact" type="button" role="tab" aria-controls="data" aria-selected="false">Data SAW</button>
+                            <button class="nav-link" id="data-tab" data-bs-toggle="tab" data-bs-target="#data" type="button" role="tab" aria-controls="data" aria-selected="false">Data SAW</button>
                         </li>
                     </ul>
                     <div class="tab-content" id="myTabContent">
@@ -74,21 +74,28 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="tab-pane fade" id="data" role="tabpanel" aria-labelledby="data-tab">
-                            <div class="card-body">
-                                <table class="table" id="tableDataCriteria" width="100%">
-                                    <thead>
-                                        <tr>
-                                            <th>Name</th>
-                                            <th>Category</th>
-                                            <th>Percent</th>
-                                            <th>Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
+                        <div class="tab-pane fade mt-3" id="data" role="tabpanel" aria-labelledby="data-tab">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h6 class="float-start">Data Criteria</h6>
+                                    <button class="btn btn-primary float-end" id="btnAddCriteria">Add New</button>
+                                </div>
+                                <div class="card-body">
+                                    <table class="table" id="tableDataTransaction" width="100%">
+                                        <thead>
+                                            <tr>
+                                                <th>Code</th>
+                                                <th>Name</th>
+                                                @foreach ($criterias as $item)
+                                                    <th>{{ $item->name }}</th>
+                                                @endforeach
+                                            </tr>
+                                        </thead>
+                                        <tbody>
 
-                                    </tbody>
-                                </table>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -183,6 +190,13 @@
         }
     });
 
+    const testData = [
+                {'data':'code'},
+                {'data':'name'},
+                {'data':'data.Absensi'},
+                {'data':'data.Performa'}
+            ];
+
     $(function() {
         dataAlternative = $('#tableDataAlternative').DataTable({
             'processing':true,
@@ -224,6 +238,27 @@
                 }}
             ]
         });
+
+        $.ajax({
+            url: '{{ route("transaction.column", $title->id) }}',
+            type: 'GET',
+            success: function (res) {
+                var dataTransaction = $('#tableDataTransaction').DataTable({
+                    'processing':true,
+                    'serverSide':true,
+                    'ajax':'{{ route("transaction.data", $title->id) }}',
+                    'dom':'Bfrtip',
+                    'buttons': [
+                        'copy', 'csv', 'excel', 'pdf', 'print','pageLength'
+                    ],
+                    lengthMenu: [
+                        [10, 25, 50, -1], [10, 25, 50, 'All']
+                    ],
+                    'columns':res
+                });
+
+            }
+        })
 
         $("#tableDataAlternative_filter").addClass('float-end mb-2');
         $(".dt-buttons").css("margin-bottom","0 !important")

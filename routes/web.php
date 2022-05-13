@@ -4,6 +4,7 @@ use App\Http\Controllers\AlternativeController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CriteriaController;
 use App\Http\Controllers\TitleController;
+use App\Http\Controllers\TransactionController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -44,6 +45,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::put('/title/{id}/update','update')->name('title.update');
         Route::delete('/title/{id}/delete','delete')->name('title.delete');
         Route::get('/title/{id}/process', 'process')->name('title.process');
+        Route::get('/transaction/{titleId}/column','columTransaction')->name('transaction.column');
     });
 
     Route::controller(AlternativeController::class)->group(function () {
@@ -63,6 +65,8 @@ Route::group(['middleware' => 'auth'], function () {
         Route::delete('/criteria/{id}/delete','delete')->name('criteria.delete');
     });
 
-
-
+    Route::controller(TransactionController::class)->group(function () {
+        Route::get('/transaction/{titleId}/data','data')->name('transaction.data');
+        Route::put('/transaction/{titleId}/generate','generate')->name('transction.generate');
+    });
 });
