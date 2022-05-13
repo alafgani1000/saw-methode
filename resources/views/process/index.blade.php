@@ -191,11 +191,11 @@
     });
 
     const testData = [
-                {'data':'code'},
-                {'data':'name'},
-                {'data':'data.Absensi'},
-                {'data':'data.Performa'}
-            ];
+        {'data':'code'},
+        {'data':'name'},
+        {'data':'data.Absensi'},
+        {'data':'data.Performa'}
+    ];
 
     $(function() {
         dataAlternative = $('#tableDataAlternative').DataTable({

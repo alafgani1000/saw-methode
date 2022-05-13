@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Alternative;
 use App\Models\Criteria;
 use App\Models\Title;
 use Illuminate\Http\Request;
@@ -79,5 +80,14 @@ class TitleController extends Controller
         ]);
         $column = $alter->merge($crt);
         return response()->json($column);
+    }
+
+    public function formTransaction($titleId)
+    {
+        $alternatives = Alternative::where('title_id',$titleId)->whereNotIn('code',function($query) {
+            $query->select('code')->from('transactions')->where('title_id',$titleId);
+        })->get();
+        $criterias = Criteria::where('title_id',$titleId);
+        return view('process.create',compact('alternatives','criterias'));
     }
 }
