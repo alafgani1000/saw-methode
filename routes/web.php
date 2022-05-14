@@ -45,7 +45,6 @@ Route::group(['middleware' => 'auth'], function () {
         Route::put('/title/{id}/update','update')->name('title.update');
         Route::delete('/title/{id}/delete','delete')->name('title.delete');
         Route::get('/title/{id}/process', 'process')->name('title.process');
-        Route::get('/transaction/{titleId}/column','columTransaction')->name('transaction.column');
     });
 
     Route::controller(AlternativeController::class)->group(function () {
@@ -68,5 +67,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::controller(TransactionController::class)->group(function () {
         Route::get('/transaction/{titleId}/data','data')->name('transaction.data');
         Route::put('/transaction/{titleId}/generate','generate')->name('transction.generate');
+        Route::get('/transaction/{titleId}/column','columTransaction')->name('transaction.column');
+        Route::get('/transaction/{titleId}/create','formTransaction')->name('transaction.create');
+        Route::post('/trasanction/','store')->name('transaction.store');
     });
 });

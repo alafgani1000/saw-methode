@@ -12,10 +12,42 @@ class TransactionController extends Controller
 {
     public function store(Request $req)
     {
-        $data = [
+        $data = collect([
             'title_id' => $req->titleId,
             'alternative_id' => $req->alternativeId
-        ];
+        ]);
+        $criterias = Criteria::where('title_id',$req->title_id)->get();
+        $reqArray = collect($req->all())->toArray();
+        foreach ($criterias as $criteria) {
+            $data->put('attribute_id',$criteria->id);
+            $data->put('value',$req[$criteria->name]);
+            Transaction::create($data);
+        }
+    }
+
+    public function columTransaction($titleId)
+    {
+        $criterias = Criteria::orderBy('id','asc')->where('title_id',$titleId)->get();
+        $crt = $criterias->map(function ($item,$key) {
+            return [
+                'data' => 'data.'.$item->name
+            ];
+        })->all();
+        $alter = collect([
+            ['data' => 'code'],
+            ['data' => 'name']
+        ]);
+        $column = $alter->merge($crt);
+        return response()->json($column);
+    }
+
+    public function formTransaction($titleId)
+    {
+        $alternatives = Alternative::where('title_id',$titleId)->whereNotIn('code',function($query) use($titleId) {
+            $query->select('code')->from('transactions')->where('title_id',$titleId);
+        })->get();
+        $criterias = Criteria::where('title_id',$titleId);
+        return view('process.create',compact('alternatives','criterias'));
     }
 
     public function data($titleId)

@@ -77,8 +77,8 @@
                         <div class="tab-pane fade mt-3" id="data" role="tabpanel" aria-labelledby="data-tab">
                             <div class="card">
                                 <div class="card-header">
-                                    <h6 class="float-start">Data Criteria</h6>
-                                    <button class="btn btn-primary float-end" id="btnAddCriteria">Add New</button>
+                                    <h6 class="float-start">Data Transaction</h6>
+                                    <button class="btn btn-primary float-end" id="btnAddTransaction">Add New</button>
                                 </div>
                                 <div class="card-body">
                                     <table class="table" id="tableDataTransaction" width="100%">
@@ -169,6 +169,13 @@
         </div>
     </div>
 </div>
+<div class="modal" tabindex="-1" id="modalEditTransaction">
+    <div class="modal-dialog">
+        <div class="modal-content" id="modalContEditTransaction">
+
+        </div>
+    </div>
+</div>
 {{-- end modal transaction --}}
 <script>
     var modalAddAlternative = new bootstrap.Modal(document.getElementById('modalAddAlternative'), {
@@ -186,6 +193,10 @@
     var modalEditCriteria = new bootstrap.Modal(document.getElementById('modalEditCriteria'), {
         keyboard: false
     });
+
+    var modalAddTransaction = new bootstrap.Modal(document.getElementById('modalAddTransaction'), {
+        keyboard: false;
+    })
 
     Toast = Swal.mixin({
         toast: true,
@@ -248,11 +259,12 @@
             ]
         });
 
+        dataTransaction = null;
         $.ajax({
             url: '{{ route("transaction.column", $title->id) }}',
             type: 'GET',
             success: function (res) {
-                var dataTransaction = $('#tableDataTransaction').DataTable({
+                dataTransaction = $('#tableDataTransaction').DataTable({
                     'processing':true,
                     'serverSide':true,
                     'ajax':'{{ route("transaction.data", $title->id) }}',
@@ -277,10 +289,27 @@
         $(".dt-buttons").css("margin-bottom","0 !important")
         $(".dt-buttons").addClass('float-start mb-0 pb-0');
 
+        $('#btnAddTransaction').on('click', function (e) {
+            let url = '{{ route('transaction.create', $title->id) }}';
+            $.ajax({
+                type:'GET',
+                url: url,
+                data: {}
+            }).done(function (res) {
+                $('#modalContAddTransaction').html(res);
+                modalAddTransaction.show();
+            }).fail(function (res) {
+                Toast.fire({
+                    icon: 'error',
+                    title: res
+                });
+            });
+        });
+
         $('#btnAddCriteria').on('click', function (e) {
             let url = '{{ route('criteria.create', $title->id) }}';
             $.ajax({
-                type: "GET",
+                type: 'GET',
                 url: url,
                 data: {},
             }).done(function (res) {
@@ -299,7 +328,7 @@
             let url = '{{ route("criteria.edit", ":dataId") }}';
             url = url.replace(':dataId', dataId);
             $.ajax({
-                type: "GET",
+                type: 'GET',
                 url: url,
                 data: {},
             }).done(function (res) {
