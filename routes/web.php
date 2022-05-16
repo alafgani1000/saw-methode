@@ -70,5 +70,6 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/transaction/{titleId}/column','columTransaction')->name('transaction.column');
         Route::get('/transaction/{titleId}/create','formTransaction')->name('transaction.create');
         Route::post('/trasanction/','store')->name('transaction.store');
+        Route::get('/transaction/{titleId}/{alternativeId}/edit','formEditTransaction')->name('transaction.edit');
     });
 });

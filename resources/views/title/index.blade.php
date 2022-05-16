@@ -97,7 +97,7 @@
                     let dataId = data;
                     let link = '{{ route("title.process", ':dataId') }}';
                     link = link.replace(':dataId', dataId);
-                    return '<div class="btn-group"><button dataid="'+data+'" class="btn btn-warning btn-sm cat-btn-edit text-white">Edit</button ><button dataid="'+data+'" class="btn btn-danger btn-sm cat-btn-delete">Delete</button><a class="btn btn-sm btn-primary" href="'+link+'" >Process</a></div>'
+                    return '<div class="btn-group"><button dataid="'+data+'" class="btn btn-warning btn-sm title-btn-edit text-white">Edit</button ><button dataid="'+data+'" class="btn btn-danger btn-sm title-btn-delete">Delete</button><a class="btn btn-sm btn-primary" href="'+link+'" >Process</a></div>'
                 }}
             ]
         })
@@ -111,6 +111,70 @@
             $('#titleText').val('');
             $('#helpTitleText').text('');
             modalAddTitle.show();
+        });
+
+        $('#tableDataTitle').on('click', '.title-btn-edit', function () {
+            let dataId = $(this).attr('dataid');
+            let url = '{{ route("title.edit", ":dataId") }}';
+            url = url.replace(':dataId', dataId);
+            $.ajax({
+                type: 'GET',
+                url: url,
+                data: {},
+            }).done(function (res) {
+                $('#modalEditContTitle').html(res);
+                modalEditTitle.show();
+            }).fail(function (res) {
+                Toast.fire({
+                    icon: 'error',
+                    title: 'Error'
+                });
+            });
+        });
+
+        $('#tableDataTitle').on('click', '.title-btn-delete', function () {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'all related data will be deleted !!',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Delete',
+                preConfirm: () => {
+                    let dataId = $(this).attr('dataid');
+                    let url = '{{ route("title.delete", ":dataId") }}';
+                    url = url.replace(':dataId', dataId);
+                    $.ajax({
+                        type: "DELETE",
+                        url: url,
+                        data: {},
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        }
+                    }).done(function (res) {
+                        Toast.fire({
+                            icon: 'success',
+                            title: res
+                        });
+                        dataTitle.ajax.reload();
+                    }).fail(function (res) {
+                        Toast.fire({
+                            icon: 'error',
+                            title: res
+                        });
+                    });
+                },
+                allowOutsideClick: () => !Swal.isLoading()
+                }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire(
+                    'Deleted!',
+                    'Category data has been deleted.',
+                    'success'
+                    )
+                }
+            })
         });
 
         $('#formAddTitle').on('submit', function (e) {

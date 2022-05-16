@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Alternative;
 use App\Models\Criteria;
+use App\Models\Title;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
@@ -12,16 +13,16 @@ class TransactionController extends Controller
 {
     public function store(Request $req)
     {
+        $criterias = Criteria::where('title_id',$req->title)->get();
         $data = collect([
-            'title_id' => $req->titleId,
-            'alternative_id' => $req->alternativeId
+            'title_id' => $req->title,
+            'alternative_id' => $req->code
         ]);
-        $criterias = Criteria::where('title_id',$req->title_id)->get();
         $reqArray = collect($req->all())->toArray();
         foreach ($criterias as $criteria) {
             $data->put('attribute_id',$criteria->id);
-            $data->put('value',$req[$criteria->name]);
-            Transaction::create($data);
+            $data->put('value',$reqArray[strtolower($criteria->id)]);
+            Transaction::create($data->all());
         }
     }
 
@@ -43,17 +44,26 @@ class TransactionController extends Controller
 
     public function formTransaction($titleId)
     {
-        $alternatives = Alternative::where('title_id',$titleId)->whereNotIn('code',function($query) use($titleId) {
-            $query->select('code')->from('transactions')->where('title_id',$titleId);
+        $alternatives = Alternative::where('title_id',$titleId)->whereNotIn('id',function($query) use($titleId) {
+            $query->select('alternative_id')->from('transactions')->where('title_id',$titleId);
         })->get();
-        $criterias = Criteria::where('title_id',$titleId);
-        return view('process.create',compact('alternatives','criterias'));
+        $criterias = Criteria::where('title_id',$titleId)->get();
+        return view('process.create',compact('alternatives','criterias','titleId'));
+    }
+
+    public function formEditTransaction($titleId,$alternativeId)
+    {
+        $alternatives = Alternative::where('title_id',$titleId)->where('id',$alternativeId)->first();
+        $criterias = Criteria::where('title_id',$titleId)->get();
+        $transactions = Transaction::where('title_id',$titleId)->where('alternative_id',$alternativeId)->get();
+        return view('process.edit',compact('alternatives','criterias','titleId','transactions'));
     }
 
     public function data($titleId)
     {
         $criterias = Criteria::where('title_id','=',$titleId)->orderBy('id','asc')->get();
-        $alternatives = Alternative::where('title_id','=',$titleId)->get();
+        $dataTra = Transaction::distinct()->where('title_id','=',$titleId)->get(['alternative_id']);
+        $alternatives = Alternative::where('title_id','=',$titleId)->whereIn('id',$dataTra->pluck('alternative_id'))->get();
         $datas = Transaction::where('title_id','=',$titleId)->get();
         $data = $alternatives->map(function($item, $key) use($criterias,$datas,$titleId) {
             $alternativeId = $item->id;
@@ -65,6 +75,7 @@ class TransactionController extends Controller
             });
             // return
             return [
+                'id' => $item->id,
                 'code' => $item->code,
                 'name' => $item->name,
                 'data' => $criteria->flatMap(function ($values) {

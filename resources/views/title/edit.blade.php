@@ -7,19 +7,19 @@
         @csrf
         <div class="mb-3">
             <label for="text" class="form-label">Text</label>
-            <input type="text" name="text" class="form-control" id="text" value="{{ $data->name }}">
-            <div id="helpEditCategoryName" class="help-validate">
+            <input type="text" name="text" class="form-control" id="titleIext" value="{{ $data->text }}">
+            <div id="helpEditTitleText" class="help-validate">
             </div>
         </div>
     </form>
 </div>
 <div class="modal-footer">
     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-    <button type="submit" form="formEditCategory" id="updateCategory" class="btn btn-primary">Update</button>
+    <button type="submit" form="formEditTitle" id="updateCategory" class="btn btn-primary">Update</button>
 </div>
 <script>
     $(function() {
-        $('#formEditCategory').on('submit',function (e) {
+        $('#formEditTitle').on('submit',function (e) {
             e.preventDefault();
             const url = $(this).attr('action');
             const data = $(this).serialize();
@@ -32,16 +32,15 @@
                     icon: 'success',
                     title: res
                 });
-                modalEditCategory.hide();
-                dataCategory();
+                modalEditTitle.hide();
+                dataTitle.ajax.reload();
             }).fail(function (res) {
                 let errors = res.responseJSON.errors;
                 Toast.fire({
                     icon: 'error',
                     title: 'Input Failed'
                 });
-                $('#helpEditCategoryName').text(errors.name);
-                $('#helpEditCategoryDescription').text(errors.description);
+                $('#helpEditTitleText').text(errors.text);
             });
         });
     })

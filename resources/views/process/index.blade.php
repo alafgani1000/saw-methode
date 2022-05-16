@@ -78,7 +78,10 @@
                             <div class="card">
                                 <div class="card-header">
                                     <h6 class="float-start">Data Transaction</h6>
-                                    <button class="btn btn-primary float-end" id="btnAddTransaction">Add New</button>
+                                    <div class="btn-group  float-end">
+                                        <button class="btn btn-primary" id="btnAddTransaction">Add New</button>
+                                    </div>
+
                                 </div>
                                 <div class="card-body">
                                     <table class="table" id="tableDataTransaction" width="100%">
@@ -89,6 +92,7 @@
                                                 @foreach ($criterias as $item)
                                                     <th>{{ $item->name }}</th>
                                                 @endforeach
+                                                <th>Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -164,7 +168,7 @@
 {{-- start modal transaction --}}
 <div class="modal" tabindex="-1" id="modalAddTransaction">
     <div class="modal-dialog">
-        <div classs="modal-content" id="modalContAddTransaction">
+        <div class="modal-content" id="modalContAddTransaction">
 
         </div>
     </div>
@@ -195,7 +199,11 @@
     });
 
     var modalAddTransaction = new bootstrap.Modal(document.getElementById('modalAddTransaction'), {
-        keyboard: false;
+        keyboard: false
+    });
+
+    var modalEditTransaction = new bootstrap.Modal(document.getElementById('modalEditTransaction'), {
+        keyboard: false
     })
 
     Toast = Swal.mixin({
@@ -264,6 +272,10 @@
             url: '{{ route("transaction.column", $title->id) }}',
             type: 'GET',
             success: function (res) {
+                let column = res
+                column.push( {'data':'id', render:function(data){
+                    return '<div class="btn-group"><button dataid="'+data+'" class="btn btn-warning btn-sm tra-btn-edit text-white">Edit</button ><button dataid="'+data+'" class="btn btn-danger btn-sm tra-btn-delete">Delete</button></div>'
+                }})
                 dataTransaction = $('#tableDataTransaction').DataTable({
                     'processing':true,
                     'serverSide':true,
@@ -275,7 +287,7 @@
                     lengthMenu: [
                         [10, 25, 50, -1], [10, 25, 50, 'All']
                     ],
-                    'columns':res
+                    'columns':column
                 });
 
             }
@@ -290,7 +302,7 @@
         $(".dt-buttons").addClass('float-start mb-0 pb-0');
 
         $('#btnAddTransaction').on('click', function (e) {
-            let url = '{{ route('transaction.create', $title->id) }}';
+            let url = '{{ route('transaction.create',$title->id) }}';
             $.ajax({
                 type:'GET',
                 url: url,
@@ -305,6 +317,25 @@
                 });
             });
         });
+
+        $('#tableDataTransaction').on('click','.tra-btn-edit', function (e) {
+            let dataId = $(this).attr('dataid');
+            let url = '{{ route("transaction.edit", [$title->id,":dataId"]) }}';
+            url = url.replace(':dataId', dataId);
+            $.ajax({
+                type:'GET',
+                url: url,
+                data: {}
+            }).done(function (res) {
+                $('#modalContEditTransaction').html(res);
+                modalEditTransaction.show();
+            }).fail(function (res) {
+                Toast.fire({
+                    icon: 'error',
+                    title: res
+                });
+            });
+        })
 
         $('#btnAddCriteria').on('click', function (e) {
             let url = '{{ route('criteria.create', $title->id) }}';
