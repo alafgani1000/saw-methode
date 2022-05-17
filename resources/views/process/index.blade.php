@@ -180,6 +180,13 @@
         </div>
     </div>
 </div>
+<div class="modal" tabindex="-1" id="modalEditTransaction">
+    <div class="modal-dialog">
+        <div class="modal-content" id="modalContEditTransaction">
+
+        </div>
+    </div>
+</div>
 {{-- end modal transaction --}}
 <script>
     var modalAddAlternative = new bootstrap.Modal(document.getElementById('modalAddAlternative'), {
@@ -262,7 +269,7 @@
                 {'data':'category.name'},
                 {'data':'percent'},
                 {'data':'id', render:function(data){
-                    return '<div class="btn-group"><button dataid="'+data+'" class="btn btn-warning btn-sm criteria-btn-edit text-white">Edit</button ><button dataid="'+data+'" class="btn btn-danger btn-sm criteria-btn-delete">Delete</button></div>'
+                    return '<div class="btn-group"><button dataid="'+data+'" class="btn btn-warning btn-sm criteria-btn-edit text-white">Edit</button ><button dataid="'+data+'" class="btn btn-danger btn-sm criteria-btn-delete">Delete</button><button dataid="'+data+'" class="btn btn-info btn-sm criteria-btn-crips text-white">Data Crips</button></div>'
                 }}
             ]
         });
