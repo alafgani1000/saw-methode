@@ -337,6 +337,27 @@
             });
         })
 
+        $('#tableDataTransaction').on('click','.tra-btn-delete', function (e) {
+            let dataId = $(this).attr('dataid');
+            let url = '{{ route("transaction.delete", [$title->id,":dataId"]) }}';
+            url = url.replace(':dataId', dataId);
+            $.ajax({
+                type:'DELETE',
+                url: url,
+                data: {}
+            }).done(function (res) {
+                Toast.fire({
+                    icon: 'success',
+                    title: res
+                });
+            }).fail(function (res) {
+                Toast.fire({
+                    icon: 'error',
+                    title: res
+                });
+            });
+        })
+
         $('#btnAddCriteria').on('click', function (e) {
             let url = '{{ route('criteria.create', $title->id) }}';
             $.ajax({

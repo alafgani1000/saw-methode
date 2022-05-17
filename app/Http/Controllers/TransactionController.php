@@ -24,6 +24,31 @@ class TransactionController extends Controller
             $data->put('value',$reqArray[strtolower($criteria->id)]);
             Transaction::create($data->all());
         }
+        return response("Data Saved");
+    }
+
+    public function update(Request $req)
+    {
+        $req->validate([
+            'title' => 'required',
+            'alternative' => 'required'
+        ]);
+        $criterias = Criteria::where('title_id',$req->title)->get();
+        $reqArray = collect($req->all())->toArray();
+        foreach ($criterias as $criteria) {
+            Transaction::where('title_id',$req->title)
+            ->where('alternative_id',$req->alternative)
+            ->where('attribute_id',$criteria->id)->update([
+                'value' => $reqArray[$criteria->id]
+            ]);
+        }
+        return response("Data Updated");
+    }
+
+    public function delete($titleId,$alternativeId)
+    {
+        Transaction::where('title_id',$titleId)->where('alternative_id',$alternativeId)->delete();
+        return response('Data Deleted');
     }
 
     public function columTransaction($titleId)

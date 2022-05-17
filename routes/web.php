@@ -71,5 +71,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/transaction/{titleId}/create','formTransaction')->name('transaction.create');
         Route::post('/trasanction/','store')->name('transaction.store');
         Route::get('/transaction/{titleId}/{alternativeId}/edit','formEditTransaction')->name('transaction.edit');
+        Route::post('/transaction/update','update')->name('transaction.update');
+        Route::delete('/transaction/{titleId}/{alternativeId}/delete')->name('transaction.delete');
     });
 });

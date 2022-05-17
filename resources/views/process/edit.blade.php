@@ -3,9 +3,10 @@
     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 </div>
 <div class="modal-body">
-    <form method="post" action="{{ route('transaction.store') }}" id="formEditTransaction">
+    <form method="post" action="{{ route('transaction.update') }}" id="formEditTransaction">
         @csrf
         <input type="hidden" value="{{ $titleId }}" name="title" id="titleTransaction">
+        <input type="hidden" value="{{ $alternatives->id }}" name="alternative" id="alternativeTransaction">
         <div class="mb-3">
             <label for="code" class="form-label">Alternative</label>
             <input class="form-control" name="name" value="{{ $alternatives->name }}">
@@ -18,7 +19,7 @@
             @endphp
             <div class="mb-3">
                 <label for="{{ $item->name }}" class="form-label">{{ $item->name }}</label>
-                <input type="text" name="{{ Str::lower($item->id) }}" class="form-control" id="{{ Str::lower($item->name)  value="{{ isset($dtra->value) ? $dtra->value : 0 }}"}}">
+                <input type="text" name="{{ Str::lower($item->id) }}" class="form-control" id="{{ Str::lower($item->name) }}" value="{{ isset($dtra->value) ? $dtra->value : 0 }}">
                 <div id="help.{{ Str::lower($item->name) }}" class="help-validate">
                 </div>
             </div>
@@ -44,7 +45,7 @@
                     icon: 'success',
                     title: res
                 });
-                modalAddTransaction.hide();
+                modalEditTransaction.hide();
                 dataTransaction.ajax.reload();
             }).fail(function (res) {
                 let errors = res.responseJSON.errors;
