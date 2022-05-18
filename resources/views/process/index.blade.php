@@ -25,6 +25,9 @@
                             <button class="nav-link" id="criteria-tab" data-bs-toggle="tab" data-bs-target="#criteria" type="button" role="tab" aria-controls="criteria" aria-selected="false">Criteria</button>
                         </li>
                         <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="crips-tab" data-bs-toggle="tab" data-bs-target="#crips" type="button" role="tab" aria-controls="crips" aria-selected="false">Data Crips</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
                             <button class="nav-link" id="data-tab" data-bs-toggle="tab" data-bs-target="#data" type="button" role="tab" aria-controls="data" aria-selected="false">Data SAW</button>
                         </li>
                     </ul>
@@ -102,6 +105,28 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="tab-pane fade mt-3" id="crips" role="tabpanel" aria-labelledby="crips-tab">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h6 class="float-start">Data Crips</h6>
+                                    <button class="btn btn-primary float-end" id="btnAddCrips">Add New</button>
+                                </div>
+                                <div class="card-body">
+                                    <table class="table" id="tableDataCrips" width="100%">
+                                        <thead>
+                                            <tr>
+                                                <th>Criteria</th>
+                                                <th>Data Crips</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -169,13 +194,6 @@
 <div class="modal" tabindex="-1" id="modalAddTransaction">
     <div class="modal-dialog">
         <div class="modal-content" id="modalContAddTransaction">
-
-        </div>
-    </div>
-</div>
-<div class="modal" tabindex="-1" id="modalEditTransaction">
-    <div class="modal-dialog">
-        <div class="modal-content" id="modalContEditTransaction">
 
         </div>
     </div>
@@ -269,7 +287,7 @@
                 {'data':'category.name'},
                 {'data':'percent'},
                 {'data':'id', render:function(data){
-                    return '<div class="btn-group"><button dataid="'+data+'" class="btn btn-warning btn-sm criteria-btn-edit text-white">Edit</button ><button dataid="'+data+'" class="btn btn-danger btn-sm criteria-btn-delete">Delete</button><button dataid="'+data+'" class="btn btn-info btn-sm criteria-btn-crips text-white">Data Crips</button></div>'
+                    return '<div class="btn-group"><button dataid="'+data+'" class="btn btn-warning btn-sm criteria-btn-edit text-white">Edit</button ><button dataid="'+data+'" class="btn btn-danger btn-sm criteria-btn-delete">Delete</button></div>'
                 }}
             ]
         });
