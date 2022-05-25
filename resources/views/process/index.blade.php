@@ -206,6 +206,15 @@
     </div>
 </div>
 {{-- end modal transaction --}}
+{{-- start modal crips --}}
+<div class="modal" tabindex="-1" id="modalAddCrips">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" id="modalContAddCrips">
+
+        </div>
+    </div>
+</div>
+{{-- end modal crips --}}
 <script>
     var modalAddAlternative = new bootstrap.Modal(document.getElementById('modalAddAlternative'), {
         keyboard: false
@@ -228,6 +237,10 @@
     });
 
     var modalEditTransaction = new bootstrap.Modal(document.getElementById('modalEditTransaction'), {
+        keyboard: false
+    })
+
+    var modalAddCrips = new bootstrap.Modal(document.getElementById('modalAddCrips'), {
         keyboard: false
     })
 
@@ -325,6 +338,23 @@
         $("#tableDataCriteria_filter").addClass('float-end mb-2');
         $(".dt-buttons").css("margin-bottom","0 !important")
         $(".dt-buttons").addClass('float-start mb-0 pb-0');
+
+        $('#btnAddCrips').on('click', function (e) {
+            let url = '{{ route('crips.create',$title->id) }}';
+            $.ajax({
+                type:'GET',
+                url: url,
+                data: {}
+            }).done(function (res) {
+                $('#modalContAddCrips').html(res);
+                modalAddCrips.show();
+            }).fail(function (res) {
+                Toast.fire({
+                    icon: 'error',
+                    title: res
+                });
+            });
+        });
 
         $('#btnAddTransaction').on('click', function (e) {
             let url = '{{ route('transaction.create',$title->id) }}';

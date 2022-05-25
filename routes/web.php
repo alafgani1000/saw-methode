@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AlternativeController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\CripsController;
 use App\Http\Controllers\CriteriaController;
 use App\Http\Controllers\TitleController;
 use App\Http\Controllers\TransactionController;
@@ -73,5 +74,9 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/transaction/{titleId}/{alternativeId}/edit','formEditTransaction')->name('transaction.edit');
         Route::post('/transaction/update','update')->name('transaction.update');
         Route::delete('/transaction/{titleId}/{alternativeId}/delete')->name('transaction.delete');
+    });
+
+    Route::controller(CripsController::class)->group(function () {
+        Route::get('/crips/{titleId}/create','create')->name('crips.create');
     });
 });
