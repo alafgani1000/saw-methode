@@ -3,7 +3,7 @@
     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 </div>
 <div class="modal-body">
-    <form method="post" action="{{ route('transaction.store') }}" id="formAddCrips">
+    <form method="post" action="{{ route('crips.store') }}" id="formAddCrips">
         @csrf
         <div class="mb-3">
             <label for="criteria" class="form-label">Criteria</label>
@@ -24,9 +24,9 @@
         </div>
         <div class="mb-3">
             <div class="row">
-                <div class="col">Start Value</div>
                 <div class="col">Operator</div>
-                <div class="col">End Value</div>
+                <div class="col">End Criteria Value</div>
+                <div class="col">Crips Value</div>
             </div>
             <div id="dataCrips">
 
@@ -36,19 +36,42 @@
 </div>
 <div class="modal-footer">
     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-    <button type="submit" form="formAddTransaction" id="saveCriteria" class="btn btn-primary">Save</button>
+    <button type="submit" form="formAddCrips" id="saveCrips" class="btn btn-primary">Save</button>
 </div>
 <script>
     $(function () {
         $('#btnAdd').click(function (e) {
             e.preventDefault();
             let component = $('#container-data-crips > .data-crips')
-            $('#dataCrips').append('<div class="row data-component mb-1 mt-1"><div class="col"><input type="text" class="form-control"></div><div class="col"><select class="form-select"><option> <= </option><option> >= </option><option> > </option><option> < </option><option> = </option></select></div><div class="col"><input type="text" class="form-control"></div</div>');
-
+            $('#dataCrips').append('<div class="row data-component mb-1 mt-1"><div class="col"><select name="operator[]" class="form-select"><option> <= </option><option> >= </option><option> > </option><option> < </option><option> = </option></select></div><div class="col"><input type="text" name="end[]" class="form-control"></div><div class="col"><input type="text" name="value[]" class="form-control"></div></div>');
         });
+
         $('#btnDelete').click(function (e) {
             e.preventDefault();
             $('#dataCrips').children().last().remove();
-        })
+        });
+
+        $('#formAddCrips').submit(function (e) {
+            e.preventDefault();
+            const method = $(this).attr('method');
+            const url =  $(this).attr('action');
+            let data = $(this).serialize();
+            $.ajax({
+                type: method,
+                url: url,
+                data: data
+            }).done(function (res) {
+                modalAddCrips.hide();
+                Toast.fire({
+                    icon: 'success',
+                    title: 'Input Success'
+                });
+            }).fail(function (res) {
+                Toast.fire({
+                    icon: 'error',
+                    title: 'Input Failed'
+                });
+            })
+        });
     })
 </script>

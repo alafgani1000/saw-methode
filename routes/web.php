@@ -77,6 +77,11 @@ Route::group(['middleware' => 'auth'], function () {
     });
 
     Route::controller(CripsController::class)->group(function () {
+        Route::get('/crips/{titleId}/data','data')->name('crips.data');
         Route::get('/crips/{titleId}/create','create')->name('crips.create');
+        Route::post('/crips/store','store')->name('crips.store');
+        Route::get('/crips/{id}/edit','edit')->name('crips.edit');
+        Route::put('/crips/{id}/update','update')->name('crips.update');
+        Route::delete('/crips/{id}/delete')->name('crips.delete');
     });
 });

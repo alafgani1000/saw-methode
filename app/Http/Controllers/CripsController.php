@@ -20,7 +20,7 @@ class CripsController extends Controller
 
     public function data($titleId)
     {
-        $data = Crip::with(['critera', function ($query) use($titleId) {
+        $data = Crip::with(['criteria' => function ($query) use($titleId) {
             $query->where('title_id',$titleId);
         }])
         ->get();
@@ -31,11 +31,22 @@ class CripsController extends Controller
     {
         $req->validate([
             'criteria' => 'required',
-            'crips' => 'required'
+            'end.*' => 'required|numeric',
+            'operator.*' => 'required|string',
+            'value.*' => 'required|numeric'
         ]);
+        $crips = collect();
+        $startCount = count($req->end);
+        for($i = 0; $i < $startCount; $i++) {
+            $crips->push([
+                'op' => $req->operator[$i],
+                'end' => $req->end[$i],
+                'value' => $req->value[$i]
+            ]);
+        }
         Crip::create([
             'criteria_id' => $req->criteria,
-            'data_crips' => $req->crips
+            'data_crips' => $crips
         ]);
         return response("Data Saved");
     }
@@ -49,10 +60,10 @@ class CripsController extends Controller
     public function update(Request $req, $id)
     {
         $req->validate([
-            'crips' => 'required'
+            'datacrips' => 'required'
         ]);
         Crip::where('id',$id)->update([
-            'data_crips' => $req->crips
+            'data_crips' => $req->datacrips
         ]);
         return response("Data Updated");
     }

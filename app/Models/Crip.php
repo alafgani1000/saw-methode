@@ -13,6 +13,6 @@ class Crip extends Model
 
     public function criteria()
     {
-        return $this->hasOne(Criteria::class);
+        return $this->hasOne(Criteria::class,'id');
     }
 }

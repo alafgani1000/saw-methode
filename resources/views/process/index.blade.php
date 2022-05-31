@@ -214,6 +214,13 @@
         </div>
     </div>
 </div>
+<div class="modal" tabindex="-1" id="modalEditCrips">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" id="modalContEditCrips">
+
+        </div>
+    </div>
+</div>
 {{-- end modal crips --}}
 <script>
     var modalAddAlternative = new bootstrap.Modal(document.getElementById('modalAddAlternative'), {
@@ -241,6 +248,10 @@
     })
 
     var modalAddCrips = new bootstrap.Modal(document.getElementById('modalAddCrips'), {
+        keyboard: false
+    })
+
+    var modalEditCrips = new bootstrap.Modal(document.getElementById('modalEditCrips'), {
         keyboard: false
     })
 
@@ -305,6 +316,26 @@
             ]
         });
 
+        dataCrips = $('#tableDataCrips').DataTable({
+            'processing':true,
+            'serverSide':true,
+            'ajax':'{{ route("crips.data", $title->id) }}',
+            'dom':'Bfrtip',
+            'buttons': [
+                'copy', 'csv', 'excel', 'pdf', 'print','pageLength'
+            ],
+            lengthMenu: [
+                [10, 25, 50, -1], [10, 25, 50, 'All']
+            ],
+            'columns':[
+                {'data':'criteria.name'},
+                {'data':'data_crips'},
+                {'data':'id', render:function(data){
+                    return '<div class="btn-group"><button dataid="'+data+'" class="btn btn-warning btn-sm crips-btn-edit text-white">Edit</button ><button dataid="'+data+'" class="btn btn-danger btn-sm crips-btn-delete">Delete</button></div>'
+                }}
+            ]
+        });
+
         dataTransaction = null;
         $.ajax({
             url: '{{ route("transaction.column", $title->id) }}',
@@ -328,8 +359,15 @@
                     'columns':column
                 });
 
+                $("#tableDataTransaction_filter").addClass('float-end mb-2');
+                $(".dt-buttons").css("margin-bottom","0 !important")
+                $(".dt-buttons").addClass('float-start mb-0 pb-0');
             }
         })
+
+        $("#tableDataCrips_filter").addClass('float-end mb-2');
+        $(".dt-buttons").css("margin-bottom","0 !important")
+        $(".dt-buttons").addClass('float-start mb-0 pb-0');
 
         $("#tableDataAlternative_filter").addClass('float-end mb-2');
         $(".dt-buttons").css("margin-bottom","0 !important")
@@ -550,6 +588,69 @@
                     Swal.fire(
                     'Deleted!',
                     'Category data has been deleted.',
+                    'success'
+                    )
+                }
+            })
+        });
+
+        $('#tableDataCrips').on('click', '.crips-btn-edit', function (e) {
+            let dataId = $(this).attr('dataid');
+            let url = '{{ route("crips.edit", ":dataId") }}';
+            url = url.replace(':dataId', dataId);
+            $.ajax({
+                type: "GET",
+                url: url,
+                data: {}
+            }).done(function (res) {
+                $('#modalContEditCrips').html(res);
+                modalEditCrips.show();
+            }).fail(function (res) {
+                Toast.fire({
+                    icon: 'error',
+                    title: res
+                })
+            });
+        });
+
+        $('#tableDataCrips').on('click', '.crips-btn-delete', function (e) {
+            Swal.fire({
+                title: 'Are you sure?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Delete',
+                preConfirm: () => {
+                    let dataId = $(this).attr('dataid');
+                    let url = '{{ route("crips.delete", ":dataId") }}';
+                    url = url.replace(':dataId', dataId);
+                    $.ajax({
+                        type: "DELETE",
+                        url: url,
+                        data: {},
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        }
+                    }).done(function (res) {
+                        Toast.fire({
+                            icon: 'success',
+                            title: res
+                        });
+                        dataAlternative.ajax.reload();
+                    }).fail(function (res) {
+                        Toast.fire({
+                            icon: 'error',
+                            title: res
+                        });
+                    });
+                },
+                allowOutsideClick: () => !Swal.isLoading()
+                }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire(
+                    'Deleted!',
+                    'Crips data has been deleted.',
                     'success'
                     )
                 }
