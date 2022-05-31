@@ -637,7 +637,7 @@
                             icon: 'success',
                             title: res
                         });
-                        dataAlternative.ajax.reload();
+                        dataCrips.ajax.reload();
                     }).fail(function (res) {
                         Toast.fire({
                             icon: 'error',
