@@ -16,4 +16,11 @@ class Criteria extends Model
     {
         return $this->belongsTo(Categories::class,'category_id');
     }
+
+    public function crip()
+    {
+        return $this->hasOne(Crip::class,'criteria_id');
+    }
+
+
 }

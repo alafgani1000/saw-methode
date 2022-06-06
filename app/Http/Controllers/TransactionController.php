@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Alternative;
 use App\Models\Criteria;
+use App\Models\Result;
 use App\Models\Title;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
@@ -111,6 +112,21 @@ class TransactionController extends Controller
         return DataTables::of($data->all())->toJson();
     }
 
+    public function dataCrip($crips, $criteria)
+    {
+        $pembagi = 0;
+        foreach ($crips as $crip) {
+            $operator = $crip->op;
+            $pembanding = $crip->end;
+            $value = $crip->value;
+            $cek = eval("return $criteria $operator $pembanding;");
+            if ($cek == true) {
+                $pembagi = $value;
+            }
+        }
+        return $pembagi;
+    }
+
     public function generate($titleId)
     {
         $data = collect();
@@ -119,22 +135,61 @@ class TransactionController extends Controller
         foreach ($alternatives as $alternative) {
             $dataSub = collect();
             foreach ($criterias as $criteria) {
-                if ($criteria->category_id == 1) { // benefit
-                    $pembagi = Transaction::where('title_id',$titleId)->where('attribute_id',$criteria->id)->max('value');
-                }
-                if ($criteria->category_id == 2) { // benefit
-                    $pembagi = Transaction::where('title_id',$titleId)->where('attribute_id',$criteria->id)->min('value');
-                }
-                $ts = Transaction::where('title_id',$titleId)->where('alternative_id',$alternative->id)->where('attribute_id',$criteria->id)->first();
-                if (!is_null($ts)) {
-                    $nilai = $ts->value /  $pembagi;
+                if (!isset($criteria->crip)) {
+                    if ($criteria->category_id == 1) { // benefit
+                        $pembagi = Transaction::where('title_id',$titleId)->where('attribute_id',$criteria->id)->max('value');
+                    } else if ($criteria->category_id == 2) { // cost
+                        $pembagi = Transaction::where('title_id',$titleId)->where('attribute_id',$criteria->id)->min('value');
+                    }
+                    $ts = Transaction::where('title_id',$titleId)->where('alternative_id',$alternative->id)->where('attribute_id',$criteria->id)->first();
+                    if (!is_null($ts)) {
+                        if ($criteria->category_id == 1) {
+                            $nilai = $ts->value /  $pembagi;
+                        } else if ($criteria->category_id == 2) {
+                            $nilai =  $pembagi / $ts->value;
+                        }
+                    } else {
+                        $nilai = 0;
+                    }
+                    $dataSub->put($criteria->name, ($nilai * $criteria->percent));
                 } else {
-                    $nilai = 0;
+                    if ($criteria->category_id == 1) { // benefit
+                        $dTransaction = Transaction::where('title_id',$titleId)->where('attribute_id',$criteria->id)->max('value');
+                    } else if ($criteria->category_id == 2) { // cost
+                        $dTransaction = Transaction::where('title_id',$titleId)->where('attribute_id',$criteria->id)->min('value');
+                    }
+                    $ts = Transaction::where('title_id',$titleId)->where('alternative_id',$alternative->id)->where('attribute_id',$criteria->id)->first();
+                    $crips = json_decode($criteria->crip->data_crips);
+
+                    $pembagi = $this->dataCrip($crips, $dTransaction);
+                    if (!is_null($ts)) {
+                        $nilaiCriteria = $this->dataCrip($crips, $ts->value);
+                        if ($criteria->category_id == 1) {
+                            $nilai = $nilaiCriteria /  $pembagi;
+                        } else if ($criteria->category_id == 2) {
+                            $nilai =  $pembagi / $nilaiCriteria;
+                        }
+                    } else {
+                        $nilai = 0;
+                    }
+                    $dataSub->put($criteria->name, ($nilai * $criteria->percent));
                 }
-                $dataSub->put($criteria->name, ($nilai * $criteria->percent));
             }
+            $total = $dataSub->sum();
+            $dataSub->put('alternative_id',$alternative->id);
+            $dataSub->put('total',$total);
             $data->push($dataSub);
         };
+        foreach($data->all() as $item) {
+            $result = Result::where('alternative_id', $item['alternative_id'])->first();
+            if (!is_null($result)) {
+                $result->delete();
+            }
+            Result::create([
+                'alternative_id' => $item['alternative_id'],
+                'result' => $item['total']
+            ]);
+        }
         return $data;
     }
 }
