@@ -74,6 +74,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/transaction/{titleId}/{alternativeId}/edit','formEditTransaction')->name('transaction.edit');
         Route::post('/transaction/update','update')->name('transaction.update');
         Route::delete('/transaction/{titleId}/{alternativeId}/delete')->name('transaction.delete');
+        Route::get('/transaction/{titleId}/data/process','dataResult')->name('transaction.datap-process');
     });
 
     Route::controller(CripsController::class)->group(function () {

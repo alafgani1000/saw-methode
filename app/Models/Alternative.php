@@ -11,4 +11,9 @@ class Alternative extends Model
     use HasFactory;
 
     protected $fillable = ['code','name','title_id'];
+
+    public function result()
+    {
+        return $this->hasOne(Result::class,'alternative_id');
+    }
 }

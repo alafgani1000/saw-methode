@@ -11,4 +11,9 @@ class Result extends Model
     use HasFactory;
 
     protected $fillable = ['alternative_id','result'];
+
+    public function alternative()
+    {
+        return $this->belongsTo(Alternative::class);
+    }
 }

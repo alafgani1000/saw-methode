@@ -190,6 +190,13 @@ class TransactionController extends Controller
                 'result' => $item['total']
             ]);
         }
-        return $data;
+        // return $data;
+        return ('Generate Success');
+    }
+
+    public function dataResult($titleId)
+    {
+        $data = Alternative::with('result')->get();
+        return DataTables::of($data)->toJson();
     }
 }

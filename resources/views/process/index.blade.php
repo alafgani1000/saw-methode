@@ -30,6 +30,9 @@
                         <li class="nav-item" role="presentation">
                             <button class="nav-link" id="data-tab" data-bs-toggle="tab" data-bs-target="#data" type="button" role="tab" aria-controls="data" aria-selected="false">Data SAW</button>
                         </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="process-tab" data-bs-toggle="tab" data-bs-target="#process" type="button" role="tab" aria-controls="process" aria-selected="false">Data Process</button>
+                        </li>
                     </ul>
                     <div class="tab-content" id="myTabContent">
                         <div class="tab-pane fade show active mt-3" id="alternative" role="tabpanel" aria-labelledby="alternative-tab">
@@ -118,6 +121,28 @@
                                                 <th>Criteria</th>
                                                 <th>Data Crips</th>
                                                 <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade mt-3" id="process" role="tabpanel" aria-labelledby="process-tab">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h6 class="float-start">Data Process</h6>
+                                    <button class="btn btn-primary float-end" id="btnAddProcess">Proses Data</button>
+                                </div>
+                                <div class="card-body">
+                                    <table class="table" id="tableDataProcess" width="100%">
+                                        <thead>
+                                            <tr>
+                                                <th>Code</th>
+                                                <th>Name</th>
+                                                <th>Result</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -330,11 +355,29 @@
             'columns':[
                 {'data':'criteria.name'},
                 {'data':'data_crips'},
-                {'data':'id', render:function(data){
+                {'data':'id', render:function(data) {
                     return '<div class="btn-group"><button dataid="'+data+'" class="btn btn-warning btn-sm crips-btn-edit text-white">Edit</button ><button dataid="'+data+'" class="btn btn-danger btn-sm crips-btn-delete">Delete</button></div>'
                 }}
             ]
         });
+
+        dataResult = $('#tableDataProcess').DataTable({
+            'processing':true,
+            'serverSide':true,
+            'ajax':'{{ route("transaction.datap-process",$title->id) }}',
+            'dom':'Bfrtip',
+            'buttons': [
+                'copy', 'csv', 'excel', 'pdf', 'print', 'pageLength'
+            ],
+            lengthMenu: [
+                [10, 25, 50, -1], [10, 25, 50, 'All']
+            ],
+            'columns': [
+                {'data':'code'},
+                {'data':'name'},
+                {'data':'result.result'},
+            ]
+        })
 
         dataTransaction = null;
         $.ajax({
@@ -364,6 +407,10 @@
                 $(".dt-buttons").addClass('float-start mb-0 pb-0');
             }
         })
+
+        $("#tableDataProcess_filter").addClass('float-end mb-2');
+        $(".dt-buttons").css("margin-bottom","0 !important")
+        $(".dt-buttons").addClass('float-start mb-0 pb-0');
 
         $("#tableDataCrips_filter").addClass('float-end mb-2');
         $(".dt-buttons").css("margin-bottom","0 !important")
@@ -690,6 +737,48 @@
                 $('#helpAlternativeCode').text(errors.code);
                 $('#helpAlternativeName').text(errors.name);
             });
+        });
+
+        $('#btnAddProcess').on('click', function(e) {
+            Swal.fire({
+                title: 'Proses data ?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Generate',
+                preConfirm: () => {
+                    let url = '{{ route("transction.generate", $title->id) }}';
+                    $.ajax({
+                        type: "PUT",
+                        url: url,
+                        data: {},
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        }
+                    }).done(function (res) {
+                        Toast.fire({
+                            icon: 'success',
+                            title: res
+                        });
+                        dataResult.ajax.reload();
+                    }).fail(function (res) {
+                        Toast.fire({
+                            icon: 'error',
+                            title: res
+                        });
+                    });
+                },
+                allowOutsideClick: () => !Swal.isLoading()
+                }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire(
+                    'Generated!',
+                    'Generate Success.',
+                    'success'
+                    )
+                }
+            })
         });
     });
 </script>
