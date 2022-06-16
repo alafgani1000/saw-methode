@@ -10,9 +10,17 @@ Implementasi metode saw kedalam aplikasi, aplikasi ini dibuat menggunakan framew
 
 *   npm
 
+## Download aplikasi
+
+Untuk mendownload source code anda bisa menggunakan clone atau download
+Caranya :
+
+-   untuk clone source code, click code lalu copy link tersebut, selanjutnya lakukan git clone dicomputer anda.
+-   untuk download source code, clik code lalu klik download zip
+
 ## Installation
 
--   clone this app
+-   Pastikan source code sudah ada dikomputer kita.
 -   composer install
 -   create database
 -   setting connection database in env
