@@ -13,7 +13,7 @@
                     <table class="table" id="tableDataTitle">
                         <thead>
                             <tr>
-                                <th>Text</th>
+                                <th>Title</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
